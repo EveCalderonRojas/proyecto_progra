@@ -1,4 +1,7 @@
 import matplotlib.pyplot as plt
+import pandas as pd
+
+# Clase para la visualización de los resultados encontrados en el dataset
 
 class Visualizador:
 
@@ -78,7 +81,7 @@ class Visualizador:
     # 7) Tarjetas amarillas por equipo
 
     def amarillas_por_equipo(self):
-        datos = self.__dataframe.groupby("Team")["Yellow Cards"].sum().sort_values()
+        datos = self.__dataframe.groupby("Team")["Yellow_Cards"].sum().sort_values()
 
         plt.figure(figsize=(12, 6))
         plt.barh(datos.index, datos.values)
@@ -106,7 +109,6 @@ class Visualizador:
 
 
 
-import pandas as pd
-df = pd.read_csv('premier_clean.csv')
+df = pd.read_csv("../src/data/processed/premier_clean.csv")
 
 print(df.head(10))
