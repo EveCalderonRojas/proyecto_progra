@@ -52,10 +52,10 @@ if st.sidebar.button("📊 Gráficos"):
 
 # 🌸 PORTADA
 if st.session_state.pagina == "Inicio":
-    st.title("⚽ Proyecto de Análisis de Datos – Premier League")
+    st.title("⚽ Proyecto 2 Programación - Análisis de la Premier League")
     st.markdown("""
     ### **Curso:** Programación II – Big Data  
-    ### **Estudiantes:** Evelyn & Compañero  
+    ### **Estudiantes:** Evelyn Calderón / Steven Vindas
     ---
     """)
 
@@ -131,7 +131,7 @@ elif st.session_state.pagina == "Graficos":
     st.header("📊 Visualización del Proyecto")
 
     if not os.path.exists(ruta_limpio):
-        st.error("⚠️ No se encontró el archivo limpio.")
+        st.error("No se encontró el archivo limpio.")
     else:
         df = pd.read_csv(ruta_limpio)
 
@@ -140,12 +140,12 @@ elif st.session_state.pagina == "Graficos":
 
         # Tabs de la clase Visualizador
         tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-            "⚽ Top goleadores",
-            "🎯 Top asistidores",
-            "🌍 Goles por país (equipo)",
-            "🕒 Distribución de edades",
-            "🟨 Amarillas por equipo",
-            "🏅 Goles por posición"
+            "👟 Top goleadores",
+            "👟 Top asistidores",
+            "👟 Goles por país (equipo)",
+            "👟 Distribución de edades",
+            "👟 Amarillas por equipo",
+            "👟 Goles por posición"
         ])
 
         import matplotlib.pyplot as plt
