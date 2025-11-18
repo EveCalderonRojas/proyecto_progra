@@ -4,6 +4,7 @@ import io
 import sys
 import os
 import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import seaborn as sns
 
 RUTA_BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -15,9 +16,6 @@ from src.eda.ProcesadorEDA import ProcesadorEDA
 from visualizacion.visualizador import Visualizador
 
 
-# ----------------------------------------------------------
-# CONFIG GENERAL
-# ----------------------------------------------------------
 st.set_page_config(
     page_title="Proyecto Premier League",
     page_icon="⚽",
@@ -26,31 +24,28 @@ st.set_page_config(
 
 ruta_limpio = "src/data/processed/premier_clean.csv"
 
-# ----------------------------------------------------------
-# ESTADO: para saber qué botón se presionó
-# ----------------------------------------------------------
+# Establece la 'página' de inicio como predeterminada
+
 if "pagina" not in st.session_state:
     st.session_state.pagina = "Inicio"
 
-# ----------------------------------------------------------
-# MENÚ LATERAL CON BOTONES
-# ----------------------------------------------------------
+
+# Menú con las opciones tipo botones
+
 st.sidebar.title("Menú principal")
 
 if st.sidebar.button("🏠 Inicio"):
     st.session_state.pagina = "Inicio"
 
-if st.sidebar.button("📂 Ver Dataset"):
+if st.sidebar.button("🔎 Ver Dataset"):
     st.session_state.pagina = "Dataset"
 
 if st.sidebar.button("📊 Gráficos"):
     st.session_state.pagina = "Graficos"
 
-# ----------------------------------------------------------
-# CONTENIDO DE CADA SECCIÓN
-# ----------------------------------------------------------
+# Contenidos
+# Página de inicio
 
-# 🌸 PORTADA
 if st.session_state.pagina == "Inicio":
     st.title("⚽ Proyecto 2 Programación - Análisis de la Premier League")
     st.markdown("""
@@ -59,16 +54,18 @@ if st.session_state.pagina == "Inicio":
     ---
     """)
 
-# 📂 DATASET
+# Ver el dataset
+
 elif st.session_state.pagina == "Dataset":
-    st.header("📂 Dataset Limpio")
+    st.header("🔎 Dataset Limpio")
 
     # Cargar usando ProcesadorEDA
     if os.path.exists(ruta_limpio):
         df_raw = pd.read_csv(ruta_limpio)
         eda = ProcesadorEDA(df_raw, ruta_limpio)
 
-        # Tabs
+        # Tabs para cambiar el contenido interno
+
         tab1, tab2, tab3, tab4, tab5 = st.tabs([
             "👁 Vista previa",
             "ℹ Información",
@@ -77,14 +74,13 @@ elif st.session_state.pagina == "Dataset":
             "🧮 Correlación"
         ])
 
-        # ---------- TAB 1: Vista previa ----------
+        
         with tab1:
             st.subheader("Vista previa")
             st.dataframe(eda.df)
             st.write(f"**Filas:** {eda.df.shape[0]}")
             st.write(f"**Columnas:** {eda.df.shape[1]}")
 
-        # ---------- TAB 2: Información ----------
         with tab2:
             st.subheader("Información del dataset")
 
@@ -92,13 +88,11 @@ elif st.session_state.pagina == "Dataset":
             eda.df.info(buf=buffer)
             st.text(buffer.getvalue())
 
-        # ---------- TAB 3: Estadísticas ----------
         with tab3:
             st.subheader("Estadísticas")
             resumen = eda.resumen_descriptivo()
             st.dataframe(resumen)
 
-        # ---------- TAB 4: Categóricas ----------
         with tab4:
             st.subheader("Valores categóricos")
             cols_cat = eda.df.select_dtypes(include=["object"]).columns
@@ -106,7 +100,6 @@ elif st.session_state.pagina == "Dataset":
                 st.markdown(f"### {col}")
                 st.write(eda.df[col].value_counts())
 
-        # ---------- TAB 5: Correlación ----------
         with tab5:
             st.subheader("Matriz de correlación")
 
@@ -115,9 +108,7 @@ elif st.session_state.pagina == "Dataset":
             # Mostrar tabla
             st.dataframe(corr)
 
-            # ---------------------
-            # Heatmap gráfico
-            # ---------------------
+            # Junto con la tabla se muestra también la matriz gráfica
 
             fig, ax = plt.subplots(figsize=(10, 6))
             sns.heatmap(corr, annot=True, cmap="coolwarm", fmt=".2f", ax=ax)
@@ -126,7 +117,8 @@ elif st.session_state.pagina == "Dataset":
     else:
         st.error("No se encontró el archivo.")
 
-# 📊 GRÁFICOS
+# Gráficos
+
 elif st.session_state.pagina == "Graficos":
     st.header("📊 Visualización del Proyecto")
 
@@ -138,7 +130,7 @@ elif st.session_state.pagina == "Graficos":
         from visualizacion.visualizador import Visualizador
         viz = Visualizador(df)
 
-        # Tabs de la clase Visualizador
+        # Tabs para ver cada uno de los gráficos
         tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
             "👟 Top goleadores",
             "👟 Top asistidores",
@@ -147,8 +139,6 @@ elif st.session_state.pagina == "Graficos":
             "👟 Amarillas por equipo",
             "👟 Goles por posición"
         ])
-
-        import matplotlib.pyplot as plt
 
         # 1) TOP GOLEADORES
         with tab1:
