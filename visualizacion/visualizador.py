@@ -109,6 +109,3 @@ class Visualizador:
 
 
 
-df = pd.read_csv("../src/data/processed/premier_clean.csv")
-
-print(df.head(10))
