@@ -12,6 +12,8 @@ if RUTA_BASE not in sys.path:
 
 
 from src.eda.ProcesadorEDA import ProcesadorEDA
+from visualizacion.visualizador import Visualizador
+
 
 # ----------------------------------------------------------
 # CONFIG GENERAL
@@ -126,43 +128,80 @@ elif st.session_state.pagina == "Dataset":
 
 # 📊 GRÁFICOS
 elif st.session_state.pagina == "Graficos":
-    st.header("📊 Visualización de Datos")
+    st.header("📊 Visualización del Proyecto")
 
     if not os.path.exists(ruta_limpio):
         st.error("⚠️ No se encontró el archivo limpio.")
     else:
         df = pd.read_csv(ruta_limpio)
 
-        tabA, tabB, tabC = st.tabs([
-            "📈 Histogramas",
-            "📉 Líneas",
-            "🎯 Comparaciones"
+        from visualizacion.visualizador import Visualizador
+        viz = Visualizador(df)
+
+        # Tabs de la clase Visualizador
+        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+            "⚽ Top goleadores",
+            "🎯 Top asistidores",
+            "🌍 Goles por país (equipo)",
+            "🕒 Distribución de edades",
+            "🟨 Amarillas por equipo",
+            "🏅 Goles por posición"
         ])
 
-        with tabA:
-            col = st.selectbox(
-                "Selecciona columna numérica:",
-                df.select_dtypes(include=['int64','float64']).columns
-            )
-            st.bar_chart(df[col])
+        import matplotlib.pyplot as plt
 
-        with tabB:
-            col = st.selectbox(
-                "Selecciona variable para línea:",
-                df.select_dtypes(include=['int64','float64']).columns,
-                key="linea"
-            )
-            st.line_chart(df[col])
+        # 1) TOP GOLEADORES
+        with tab1:
+            datos = df.nlargest(10, "Goals")
+            fig, ax = plt.subplots(figsize=(10, 6))
+            ax.barh(datos["Player"], datos["Goals"])
+            ax.set_title("Top 10 Goleadores")
+            ax.invert_yaxis()
+            st.pyplot(fig)
 
-        with tabC:
-            col1 = st.selectbox(
-                "Columna 1:",
-                df.select_dtypes(include=['int64','float64']).columns,
-                key="c1"
-            )
-            col2 = st.selectbox(
-                "Columna 2:",
-                df.select_dtypes(include=['int64','float64']).columns,
-                key="c2"
-            )
-            st.scatter_chart(df[[col1, col2]])
+        # 2) TOP ASISTIDORES
+        with tab2:
+            datos = df.nlargest(10, "Assists")
+            fig, ax = plt.subplots(figsize=(10, 6))
+            ax.plot(datos["Player"], datos["Assists"], marker="o")
+            plt.xticks(rotation=45, ha="right")
+            ax.set_title("Top 10 Asistidores")
+            st.pyplot(fig)
+
+        # 3) GOLES POR PAÍS EN EQUIPO
+        with tab3:
+            equipo = st.selectbox("Selecciona un equipo:", df["Team"].unique())
+            datos = df[df["Team"] == equipo]
+
+            if datos.empty:
+                st.warning("No hay datos para este equipo.")
+            else:
+                goles_por_pais = datos.groupby("Nation")["Goals"].sum()
+                fig, ax = plt.subplots(figsize=(8, 8))
+                ax.pie(goles_por_pais, labels=goles_por_pais.index, autopct="%1.1f%%")
+                ax.set_title(f"Goles por nacionalidad en {equipo}")
+                st.pyplot(fig)
+
+        # 4) DISTRIBUCIÓN DE EDADES
+        with tab4:
+            fig, ax = plt.subplots(figsize=(10, 6))
+            ax.hist(df["Age"], bins=15)
+            ax.set_title("Distribución de edades en la Premier League")
+            st.pyplot(fig)
+
+        # 5) AMARILLAS POR EQUIPO
+        with tab5:
+            datos = df.groupby("Team")["Yellow_Cards"].sum().sort_values()
+            fig, ax = plt.subplots(figsize=(12, 6))
+            ax.barh(datos.index, datos.values)
+            ax.set_title("Tarjetas Amarillas por Equipo")
+            st.pyplot(fig)
+
+        # 6) GOLES POR POSICIÓN
+        with tab6:
+            datos = df.groupby("Position")["Goals"].sum().sort_values(ascending=False).head(10)
+            fig, ax = plt.subplots(figsize=(10, 6))
+            datos.plot(kind="bar", ax=ax)
+            ax.set_title("Top Posiciones con Más Goles")
+            plt.xticks(rotation=45)
+            st.pyplot(fig)
