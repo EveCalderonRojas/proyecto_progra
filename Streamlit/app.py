@@ -68,7 +68,7 @@ elif st.session_state.pagina == "Dataset":
         # Tabs para cambiar el contenido interno
 
         tab1= st.tabs([
-            "👁 Vista previa",
+            "👁 Vista previa"
         ])
 
         with tab1:
