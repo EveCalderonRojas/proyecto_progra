@@ -67,13 +67,23 @@ elif st.session_state.pagina == "Dataset":
 
         # Tabs para cambiar el contenido interno
 
-        tab1= st.tabs([
-            "👁 Vista previa"
+        tab1, tab2= st.tabs([
+            "👁 Vista previa",
+            "📊 Estadísticas"
         ])
 
         with tab1:
             st.subheader("Vista previa")
             st.dataframe(eda.df)
+            st.write(f"**Filas:** {eda.df.shape[0]}")
+            st.write(f"**Columnas:** {eda.df.shape[1]}")
+
+        with tab2:
+            st.subheader("Información del dataset")
+
+            buffer = io.StringIO()
+            eda.df.info(buf=buffer)
+            st.text(buffer.getvalue())
 
     else:
         st.error("No se encontró el archivo.")
