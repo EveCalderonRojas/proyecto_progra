@@ -22,6 +22,7 @@ st.set_page_config(
     layout="wide"
 )
 
+ruta_sucio = "src/data/raw/premier.csv"
 ruta_limpio = "src/data/processed/premier_clean.csv"
 
 # Establece la 'página' de inicio como predeterminada
@@ -66,53 +67,13 @@ elif st.session_state.pagina == "Dataset":
 
         # Tabs para cambiar el contenido interno
 
-        tab1, tab2, tab3, tab4, tab5 = st.tabs([
+        tab1= st.tabs([
             "👁 Vista previa",
-            "ℹ Información",
-            "📊 Estadísticas",
-            "🔢 Categóricas",
-            "🧮 Correlación"
         ])
 
-        
         with tab1:
             st.subheader("Vista previa")
             st.dataframe(eda.df)
-            st.write(f"**Filas:** {eda.df.shape[0]}")
-            st.write(f"**Columnas:** {eda.df.shape[1]}")
-
-        with tab2:
-            st.subheader("Información del dataset")
-
-            buffer = io.StringIO()
-            eda.df.info(buf=buffer)
-            st.text(buffer.getvalue())
-
-        with tab3:
-            st.subheader("Estadísticas")
-            resumen = eda.resumen_descriptivo()
-            st.dataframe(resumen)
-
-        with tab4:
-            st.subheader("Valores categóricos")
-            cols_cat = eda.df.select_dtypes(include=["object"]).columns
-            for col in cols_cat:
-                st.markdown(f"### {col}")
-                st.write(eda.df[col].value_counts())
-
-        with tab5:
-            st.subheader("Matriz de correlación")
-
-            corr = eda.matriz_correlacion()
-
-            # Mostrar tabla
-            st.dataframe(corr)
-
-            # Junto con la tabla se muestra también la matriz gráfica
-
-            fig, ax = plt.subplots(figsize=(10, 6))
-            sns.heatmap(corr, annot=True, cmap="coolwarm", fmt=".2f", ax=ax)
-            st.pyplot(fig)
 
     else:
         st.error("No se encontró el archivo.")
